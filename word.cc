@@ -37,16 +37,47 @@ Word::Word(char *str, int l=4){
 
 }
 
+Word::Word(const Word& wo){
+	len = wo.len ;
+	w = new unsigned char[len] ;
+	for(int i = 0 ; i < len ; ++i)
+		w[i] = wo.w[i] ;
+}
 
-Word& Word::SubWord(){
+Word& Word::operator=(const Word& wo){
+	w = new unsigned char[len] ;
+	for(int i = 0 ; i < len ; ++i)
+		w[i] = wo.w[i] ;
+	return *this ;
+}
+
+Word Word::SubWord(){
+	char temp[len*2] ;
+	for(int i = 0 ; i < len ; ++i){
+		Byte b(w[i]) ;
+		sprintf(&temp[i*2],"%02x", b.SubByte().to_uchar()) ;
+	}
+	return Word(temp,len) ;
 }
 
 
-Word& Word::RotWord(){
+Word Word::RotWord(){
+	if(len == 4){
+		char temp[8] ;
+		sprintf(temp,"%02x%02x%02x%02x", w[1], w[2],w[3],w[0]) ;
+		return Word(temp) ;
+	}
+	else
+		return Word("00000000") ;
 }
 
 
-Word& Word::XOR(const Word& w){
+Word Word::XOR(Word wo){
+	char *temp = new char[len*2] ;
+	for(int i = 0 ; i < len ; ++i){
+		sprintf(&temp[i*2],"%02x", w[i]^wo.w[i]) ;
+	}
+	return Word(temp, len) ;
 }
 
 void Word::display(){
@@ -61,6 +92,17 @@ unsigned char *Word::to_Array(){
 	return w;
 }
 
+
+Word Word::Rcon(int i){
+	Byte b(0x02), tem(0x01) ;
+	for(int j = 1 ; j < i ; ++j){
+		tem = tem*b ;
+	}
+	char temp[8] ;
+	sprintf(temp, "%02x", tem.to_uchar()) ;
+	memset(&temp[2], '0', 6) ;
+	return Word(temp) ;
+}
 
 bool Word::compare(Word& other){
 	if (len != other.len)

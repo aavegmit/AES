@@ -12,6 +12,7 @@ class Keys{
 		Word *subkeys[44];
 	public:
 		Keys(Word& key) ;
+		void display() ;
 
 };
 

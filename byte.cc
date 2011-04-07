@@ -1,4 +1,8 @@
 #include "byte.h"
+#include "table.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdint.h>
 
 Byte::Byte(unsigned char ch){
 	c = ch ;
@@ -36,4 +40,13 @@ Byte Byte::operator*(Byte other){
 	}
 	return Byte(temp) ;
 
+}
+
+Byte Byte::SubByte(){
+	uint8_t row = 0, col = 0 ;
+	row = c >> 4 ;
+	col = (c << 4)   ;
+	col = col >> 4 ;
+	unsigned char c1 = Table::Instance()->S[row][col] ;
+	return Byte(c1) ;
 }

@@ -15,6 +15,7 @@ class Byte{
 		unsigned char to_uchar() ;
 		Byte operator*(Byte other) ;
 		Byte xtimes() ;
+		Byte SubByte() ;
 
 };
 

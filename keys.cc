@@ -30,3 +30,17 @@ void Keys::display(){
 	}
 
 }
+
+char *Keys::to_Array(int round){
+	for(int i = 0 ; i < 4 ; ++i){
+		for(int j = 0 ; j < 4 ; ++j){
+			sprintf(&res[i*8+j*2], "%02x", subkeys[i+round*4]->to_Array()[j]) ;
+		}
+	}
+	res[32] = '\0' ;
+	return res ;
+}
+
+Word **Keys::to_Word(){
+	return subkeys ;
+}

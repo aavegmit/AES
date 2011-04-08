@@ -37,6 +37,13 @@ Word::Word(char *str, int l=4){
 
 }
 
+
+void Word::copyW(unsigned char *w1){
+	for(int i = 0 ; i < len ; ++i)
+		w[i] = w1[i] ;
+}
+
+
 Word::Word(const Word& wo){
 	len = wo.len ;
 	w = new unsigned char[len] ;
@@ -60,6 +67,14 @@ Word Word::SubWord(){
 	return Word(temp,len) ;
 }
 
+void Word::SubWord1(){
+	char temp[len*2] ;
+	for(int i = 0 ; i < len ; ++i){
+		Byte b(w[i]) ;
+		sprintf(&temp[i*2],"%02x", b.SubByte().to_uchar()) ;
+	}
+	*this = Word(temp,len) ;
+}
 
 Word Word::RotWord(){
 	if(len == 4){
@@ -116,5 +131,5 @@ bool Word::compare(Word& other){
 
 // Destructor definition for the class Word
 Word::~Word(){
-	delete w ;
+//	delete w ;
 }

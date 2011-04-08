@@ -113,7 +113,9 @@ void Table::LoadData(FILE *fp){
 
 	// Check if polynomial represented by P and INVP is {00}{00}{00}{01}
 	GF28 res("00000001") ;
-	if (!( (*P)*(*INVP) == res)){
+	GF28 tempg("00000000") ;
+	tempg.copyW( (unsigned char *)( (*P)*(*INVP)) );
+	if (!( tempg == res)){
 		fprintf(stderr, "Product of P and INVP is not as required\n") ;
 		exit(0) ;
 	}

@@ -19,6 +19,7 @@ class Word{
 		Word(const Word& wo) ;
 		
 		Word SubWord();				// Uses the S-box for byte-level substitution
+		void SubWord1();			// Uses the S-box for byte-level substitution
 		Word RotWord();				// [a0, a1, a2, a3] -> [a1, a2, a3, a0]
 
 		Word XOR(Word);				// Performs the XOR function on two words
@@ -27,6 +28,7 @@ class Word{
 		unsigned char *to_Array();		// Returns the Word in array form
 		bool compare(Word&);
 		static Word Rcon(int);
+		void copyW(unsigned char *);
 		Word& operator=(const Word&) ;
 
 		~Word() ;

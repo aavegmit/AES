@@ -76,6 +76,15 @@ void Word::SubWord1(){
 	*this = Word(temp,len) ;
 }
 
+void Word::InvSubWord1(){
+	char temp[len*2] ;
+	for(int i = 0 ; i < len ; ++i){
+		Byte b(w[i]) ;
+		sprintf(&temp[i*2],"%02x", b.InvSubByte().to_uchar()) ;
+	}
+	*this = Word(temp,len) ;
+}
+
 Word Word::RotWord(){
 	if(len == 4){
 		char temp[8] ;

@@ -27,6 +27,7 @@ class Table{
 	public:
 		static Table* Instance() ;		// Returns the unique instance of this class
 		unsigned char S[16][16] ;
+		unsigned char InvS[16][16] ;
 		GF28 *P ;
 		GF28 *INVP;
 

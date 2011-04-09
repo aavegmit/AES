@@ -16,6 +16,7 @@ class Byte{
 		Byte operator*(Byte other) ;
 		Byte xtimes() ;
 		Byte SubByte() ;
+		Byte InvSubByte() ;
 
 };
 

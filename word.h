@@ -20,6 +20,7 @@ class Word{
 		
 		Word SubWord();				// Uses the S-box for byte-level substitution
 		void SubWord1();			// Uses the S-box for byte-level substitution
+		void InvSubWord1();			// Uses the S-box for byte-level substitution
 		Word RotWord();				// [a0, a1, a2, a3] -> [a1, a2, a3, a0]
 
 		Word XOR(Word);				// Performs the XOR function on two words

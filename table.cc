@@ -1,5 +1,6 @@
 #include "table.h"
 #include "word.h"
+#include <stdint.h>
 
 Table *Table::table = NULL ;
 
@@ -46,6 +47,22 @@ void Table::populateS(char *value){
 	for(int i = 0 ; i < 16 ; i++){
 		for(int j = 0 ; j < 16 ; j++){
 			S[i][j] = w.to_Array()[i*16 + j] ;
+		}
+	}
+
+	// Populate Inverse Substitution Table
+	unsigned char tempc, tempres ;
+	uint8_t row, col;
+	for(uint8_t i = 0 ; i < 16 ; i++){
+		for(uint8_t j = 0 ; j < 16 ; j++){
+			tempc = S[i][j]; 
+			row = tempc >> 4 ;
+			col = tempc << 4 ;
+			col = col >> 4 ;
+			tempres = i ;
+			tempres = tempres << 4 ;
+			tempres = tempres | j ;
+			InvS[row][col] = tempres ;
 		}
 	}
 

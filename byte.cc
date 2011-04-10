@@ -60,3 +60,12 @@ Byte Byte::InvSubByte(){
 	unsigned char c1 = Table::Instance()->InvS[row][col] ;
 	return Byte(c1) ;
 }
+
+Byte Byte::Inverse(){
+	if (c == 0x00)
+		return 0x00 ;
+	for(unsigned char i = 0x01 ; i <= 0xff; ++i){
+		if(((*this)*Byte(i)).to_uchar() == 0x01)
+			return Byte(i) ;
+	}
+}

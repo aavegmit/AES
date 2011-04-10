@@ -32,6 +32,17 @@ class Word{
 		void copyW(unsigned char *);
 		Word& operator=(const Word&) ;
 
+
+
+		void setW(int, unsigned char) ;
+
+		void WModProd(unsigned char, char *) ;
+
+		void Divide(Word, Word&, Word&) ;
+
+		void Inverse() ;
+		unsigned char* to_print(unsigned char *) ;
+
 		~Word() ;
 
 };

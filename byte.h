@@ -17,6 +17,10 @@ class Byte{
 		Byte xtimes() ;
 		Byte SubByte() ;
 		Byte InvSubByte() ;
+		Byte Inverse() ;
+		void setC(unsigned char ch){ 
+			c = ch ;
+		}
 
 };
 

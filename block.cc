@@ -1,5 +1,6 @@
 #include "block.h"
 
+// Cosntructor definition
 Block::Block(char *c1, char *c2,char *c3,char *c4){
 	g[0] = new GF28(c1) ;
 	g[1] = new GF28(c2) ;
@@ -8,13 +9,14 @@ Block::Block(char *c1, char *c2,char *c3,char *c4){
 	return ;
 }
 
-
+// Performs substituion using the S-Box
 void Block::SubBytes(){
 	for(int i = 0 ; i < 4 ; ++i){
 		g[i]->SubWord1() ;
 	}
 }
 
+// Performs the shift row operation
 void Block::ShiftRows(){
 	for (int i = 1; i < 4 ; ++i){
 		for(int j = 0 ; j < i ; ++j)
@@ -22,6 +24,7 @@ void Block::ShiftRows(){
 	}
 }
 
+// Shifts the row just once
 void Block::ShiftRowOnce(int row){
 	unsigned char temp = g[0]->to_Array()[row] ;
 	for(int i = 0 ; i < 3; ++i)
@@ -29,6 +32,7 @@ void Block::ShiftRowOnce(int row){
 	g[3]->to_Array()[row] = temp ;
 }
 
+// Performs the mix col operation
 void Block::MixColumns(){
 //	GF28 temp(const_cast<char *>(string("01010302").c_str())) ;
 	GF28 temp((char *)("00000000")) ;

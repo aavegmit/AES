@@ -12,6 +12,7 @@ unsigned char Byte::to_uchar(){
 	return c;
 }
 
+// The very important xtimes operation
 Byte Byte::xtimes(){
 	unsigned char temp = c, temp1 = c;
 	temp1 = temp1 << 1 ;
@@ -23,6 +24,7 @@ Byte Byte::xtimes(){
 	return Byte(temp1) ;
 }
 
+// The big DOT operation
 Byte Byte::operator*(Byte other){
 	Byte *v[8] ;
 	v[0] = new Byte(0x00) ;
@@ -42,6 +44,7 @@ Byte Byte::operator*(Byte other){
 
 }
 
+// Substitution using S-Box at the byte level
 Byte Byte::SubByte(){
 	uint8_t row = 0, col = 0 ;
 	row = c >> 4 ;
@@ -61,11 +64,12 @@ Byte Byte::InvSubByte(){
 	return Byte(c1) ;
 }
 
+// Find the inverse of the byte, using the brute force method
 Byte Byte::Inverse(){
 	if (c == 0x00)
 		return Byte(0x00) ;
-	if (c == 0xff)
-		return Byte(0x1c) ;
+	if (c == 0x1c)
+		return Byte(0xff) ;
 	for(uint8_t i = 0x01 ; i <= 0xfe; ++i){
 		if(((*this)*Byte((unsigned char) (i))).to_uchar() == 0x01)
 			return Byte( (unsigned char)i) ;

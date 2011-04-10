@@ -47,6 +47,7 @@ void Word::setW(int index ,unsigned char w1 ){
 	w[index] = w1 ;
 }
 
+// Copy constructor
 Word::Word(const Word& wo){
 	len = wo.len ;
 	w = new unsigned char[len] ;
@@ -54,6 +55,7 @@ Word::Word(const Word& wo){
 		w[i] = wo.w[i] ;
 }
 
+// Assignment operator overloading
 Word& Word::operator=(const Word& wo){
 	w = new unsigned char[len] ;
 	for(int i = 0 ; i < len ; ++i)
@@ -61,6 +63,7 @@ Word& Word::operator=(const Word& wo){
 	return *this ;
 }
 
+// Substitution using S-Box
 Word Word::SubWord(){
 	char temp[len*2] ;
 	for(int i = 0 ; i < len ; ++i){
@@ -69,6 +72,7 @@ Word Word::SubWord(){
 	}
 	return Word(temp,len) ;
 }
+
 
 void Word::SubWord1(){
 	char temp[len*2] ;
@@ -88,6 +92,7 @@ void Word::InvSubWord1(){
 	*this = Word(temp,len) ;
 }
 
+// Performs the ROTWORD operation
 Word Word::RotWord(){
 	if(len == 4){
 		char temp[8] ;
@@ -98,7 +103,7 @@ Word Word::RotWord(){
 		return Word((char *)("00000000")) ;
 }
 
-
+// Used for Addiotion or Substraction
 Word Word::XOR(Word wo){
 	char *temp = new char[len*2] ;
 	for(int i = 0 ; i < wo.len ; ++i){
@@ -111,6 +116,7 @@ Word Word::XOR(Word wo){
 	return Word(temp, len) ;
 }
 
+// for debugging purposes only
 void Word::display(){
 	for(int i = 0 ; i < len ; i++){
 		printf("%02x", w[i]) ;
@@ -124,6 +130,7 @@ unsigned char *Word::to_Array(){
 }
 
 
+// The Rcon constant
 Word Word::Rcon(int i){
 	Byte b(0x02), tem(0x01) ;
 	for(int j = 1 ; j < i ; ++j){
@@ -178,13 +185,25 @@ void Word::Inverse(){
 	aux[2]->to_print(str) ;
 	printf("aux[i]=%s\n", str ) ;
 
+	int flag = 0 ;
+	for (int h = 0 ; h < rem[2]->len ; ++h){
+		if (rem[2]->to_Array()[h] != 0x00){
+			flag = 1 ;
+			break ;
+		}
+	}
+
+	if (!flag){
+		printf("Multiplicative inverse of {00}{00}{00}{00} is {00}{00}{00}{00}\n") ;
+		return ;
+	}
 	GF28 temp1((char *)("00000000")) ;
 	GF28 temp2((char *)("00000000")) ;
 	Word zeroWord((char *)("00000000"), 4) ;
 	for(int i = 3 ; i < 7 ; ++i){
 		if ( i == 6 ){
 			rem[i-2]->w[ rem[i-2]->len -1  ] = rem[i-2]->w[ rem[i-2]->len - 1  ] ^ 0x01 ;
-//			printf("final round: %02x\n", rem[4]->to_Array()[rem[4]->len - 1]) ;
+			//			printf("final round: %02x\n", rem[4]->to_Array()[rem[4]->len - 1]) ;
 		}
 		Word temp(*rem[i-2]) ;
 		Word Q((char *)("00000000"), 4) ;
@@ -296,19 +315,19 @@ void Word::Divide(Word wo, Word& Q, Word& D){
 
 
 		if(D.len >= wo.len){
-//			for (int j = 0 ; j < 4 ; ++j)
-//				D.w[j] = D.w[j+1] ;
-//			D.len = wo.len ;
+			//			for (int j = 0 ; j < 4 ; ++j)
+			//				D.w[j] = D.w[j+1] ;
+			//			D.len = wo.len ;
 			--i ;
 		}
-	
+
 		++ctr ;
 		if (ctr >= 10){
 			break ;
 		}
 	}
-//	Q.display() ;
-//	D.display() ;
+	//	Q.display() ;
+	//	D.display() ;
 
 }
 

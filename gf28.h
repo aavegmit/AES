@@ -17,7 +17,7 @@ class GF28: public Word{
 		GF28();
 
 		void display() ;			// Method to display the coefficients in required format
-		char *operator*(GF28 &other);		// Operator overloading so as to perform mod product of two
+//		char *operator*(GF28 &other);		// Operator overloading so as to perform mod product of two
 							// GF28 polynomials
 		void ModProd(GF28 &other,unsigned char *);
 		bool operator==(GF28 &other);		// To compare two GF(2^8) polynomials

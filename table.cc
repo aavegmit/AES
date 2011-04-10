@@ -74,6 +74,12 @@ void Table::populateP(char *value){
 		exit(0) ;
 	}	       
 
+	char temp1 = value[0]	 ;
+	char temp2 = value[1] ;
+	value[0] = value[4] ;
+	value[1] = value[5] ;
+	value[4] = temp1 ;
+	value[5] = temp2 ;
 	P = new GF28(value) ;
 }
 
@@ -82,7 +88,13 @@ void Table::populateINVP(char *value){
 	if (strlen(value) != 9){
 		fprintf(stderr, "%d values present in INVP instead of 4\n", (int)strlen(value)) ;
 		exit(0) ;
-	}	       
+	}
+	char temp1 = value[0]	 ;
+	char temp2 = value[1] ;
+	value[0] = value[4] ;
+	value[1] = value[5] ;
+	value[4] = temp1 ;
+	value[5] = temp2 ;
 
 	INVP = new GF28(value) ;
 }
@@ -96,6 +108,7 @@ void Table::LoadData(FILE *fp){
 
 	char linebuf[1024] ;
 	char *value ;
+	int flagS = 0, flagP = 0, flagINVP = 0 ;
 	while(!feof(fp)){
 		memset(linebuf, '\0', 1024) ;
 		fgets(linebuf, 1024, fp) ;
@@ -116,22 +129,40 @@ void Table::LoadData(FILE *fp){
 
 		if (!strcmp(linebuf, "S")){
 			populateS(value) ;
+			flagS = 1 ;
 		}
 		else if(!strcmp(linebuf, "P")){
 			populateP(value) ;
+			flagP = 1 ;
 		}
 		else if(!strcmp(linebuf, "INVP")){
 			populateINVP(value) ;
+			flagINVP = 1 ;
 		}
 		else{
 			fprintf(stderr, "Invalid tables file\n") ;
 		}
 	}
+	if(!flagS){
+		fprintf(stderr, "Missing S\n") ;
+		exit(0) ;
+	}
+	if(!flagP){
+		fprintf(stderr, "Missing P\n") ;
+		exit(0) ;
+	}
+	if(!flagINVP){
+		fprintf(stderr, "Missing INVP\n") ;
+		exit(0) ;
+	}
 
 	// Check if polynomial represented by P and INVP is {00}{00}{00}{01}
-	GF28 res("00000001") ;
-	GF28 tempg("00000000") ;
-	tempg.copyW( (unsigned char *)( (*P)*(*INVP)) );
+	GF28 res((char *)("00000001")) ;
+	GF28 tempg((char *)("00000000")) ;
+	unsigned char tempStr1[4] ;
+	P->ModProd(*INVP, tempStr1) ;
+	tempg.copyW(tempStr1) ;
+//	tempg.copyW( (unsigned char *)( (*P)*(*INVP)) );
 	if (!( tempg == res)){
 		fprintf(stderr, "Product of P and INVP is not as required\n") ;
 		exit(0) ;

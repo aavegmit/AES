@@ -30,7 +30,9 @@ void Block::ShiftRowOnce(int row){
 }
 
 void Block::MixColumns(){
-	GF28 temp(const_cast<char *>(string("01010302").c_str())) ;
+//	GF28 temp(const_cast<char *>(string("01010302").c_str())) ;
+	GF28 temp((char *)("00000000")) ;
+	temp = *(Table::Instance()->P) ;
 	unsigned char res[4] ;
 	for(int i=0; i < 4; ++i){
 		temp.ModProd(*g[i], res) ;
@@ -62,7 +64,9 @@ void Block::InvShiftRowOnce(int row){
 }
 
 void Block::InvMixColumns(){
-	GF28 temp(const_cast<char *>(string("090d0b0e").c_str())) ;
+//	GF28 temp(const_cast<char *>(string("090d0b0e").c_str())) ;
+	GF28 temp((char *)("00000000")) ;
+	temp = *(Table::Instance()->INVP) ;
 	unsigned char res[4] ;
 	for(int i=0; i < 4; ++i){
 		temp.ModProd(*g[i], res) ;
@@ -85,52 +89,52 @@ void Block::AddRoundKey(Keys &k, int round){
 	}
 }
 
-Block Block::Encrypt(Keys &k){
-	printf("round[ 0].input:    %s\n", to_Array()) ;
+void Block::Encrypt(Keys &k){
+	printf("round[ 0].input    %s\n", to_Array()) ;
 	AddRoundKey(k, 0) ;
-	printf("round[ 0].k_sch:    %s\n", k.to_Array(0)) ;
+	printf("round[ 0].k_sch    %s\n", k.to_Array(0)) ;
 
 	for(int round = 1 ; round < 10 ; ++round){
-		printf("round[ %d].start:    %s\n",round,  to_Array()) ;
+		printf("round[ %d].start    %s\n",round,  to_Array()) ;
 		SubBytes() ;
-		printf("round[ %d].s_box:    %s\n",round,  to_Array()) ;
+		printf("round[ %d].s_box    %s\n",round,  to_Array()) ;
 		ShiftRows() ;
-		printf("round[ %d].s_row:    %s\n",round,  to_Array()) ;
+		printf("round[ %d].s_row    %s\n",round,  to_Array()) ;
 		MixColumns() ;
-		printf("round[ %d].m_col:    %s\n",round,  to_Array()) ;
+		printf("round[ %d].m_col    %s\n",round,  to_Array()) ;
 		AddRoundKey(k, round) ;
-		printf("round[ %d].k_sch:    %s\n",round,  k.to_Array(round)) ;
+		printf("round[ %d].k_sch    %s\n",round,  k.to_Array(round)) ;
 	}
 
 	int round = 10 ;
-	printf("round[%d].start:    %s\n",round,  to_Array()) ;
+	printf("round[%d].start    %s\n",round,  to_Array()) ;
 	SubBytes();
-	printf("round[%d].s_box:    %s\n",round,  to_Array()) ;
+	printf("round[%d].s_box    %s\n",round,  to_Array()) ;
 	ShiftRows();
-	printf("round[%d].s_row:    %s\n",round,  to_Array()) ;
+	printf("round[%d].s_row    %s\n",round,  to_Array()) ;
 	AddRoundKey(k, 10);
-	printf("round[%d].k_sch:    %s\n",round,  k.to_Array(round)) ;
-	printf("round[%d].output:   %s\n",round,  to_Array()) ;
+	printf("round[%d].k_sch    %s\n",round,  k.to_Array(round)) ;
+	printf("round[%d].output   %s\n",round,  to_Array()) ;
 
 }
 
-Block Block::Decrypt(Keys &k){
-	printf("round[ 0].iinput:   %s\n", to_Array()) ;
+void Block::Decrypt(Keys &k){
+	printf("round[ 0].iinput   %s\n", to_Array()) ;
 	AddRoundKey(k, 10) ;
-	printf("round[ 0].ik_sch:   %s\n", k.to_Array(10)) ;
+	printf("round[ 0].ik_sch   %s\n", k.to_Array(10)) ;
 
 	for(int round = 9 ; round > 0 ; --round){
-		printf("round[ %d].istart:   %s\n",10-round,  to_Array()) ;
+		printf("round[ %d].istart   %s\n",10-round,  to_Array()) ;
 
 		InvShiftRows() ;
-		printf("round[ %d].is_row:   %s\n",10-round,  to_Array()) ;
+		printf("round[ %d].is_row   %s\n",10-round,  to_Array()) ;
 
 		InvSubBytes() ;
-		printf("round[ %d].is_box:   %s\n",10-round,  to_Array()) ;
+		printf("round[ %d].is_box   %s\n",10-round,  to_Array()) ;
 
 		AddRoundKey(k, round) ;
-		printf("round[ %d].ik_sch:   %s\n",10-round,  k.to_Array(round)) ;
-		printf("round[ %d].ik_add:   %s\n",10-round,  to_Array()) ;
+		printf("round[ %d].ik_sch   %s\n",10-round,  k.to_Array(round)) ;
+		printf("round[ %d].ik_add   %s\n",10-round,  to_Array()) ;
 		
 		InvMixColumns() ;
 //		printf("round[ %d].im_col:   %s\n",10-round,  to_Array()) ;
@@ -138,14 +142,14 @@ Block Block::Decrypt(Keys &k){
 	}
 
 	int round = 0 ;
-	printf("round[%d].istart:   %s\n",10-round,  to_Array()) ;
+	printf("round[%d].istart   %s\n",10-round,  to_Array()) ;
 	InvShiftRows();
-	printf("round[%d].is_row:   %s\n",10-round,  to_Array()) ;
+	printf("round[%d].is_row   %s\n",10-round,  to_Array()) ;
 	InvSubBytes();
-	printf("round[%d].is_box:   %s\n",10-round,  to_Array()) ;
+	printf("round[%d].is_box   %s\n",10-round,  to_Array()) ;
 	AddRoundKey(k, 0);
-	printf("round[%d].ik_sch:   %s\n",10-round,  k.to_Array(round)) ;
-	printf("round[%d].ioutput:  %s\n",10-round,  to_Array()) ;
+	printf("round[%d].ik_sch   %s\n",10-round,  k.to_Array(round)) ;
+	printf("round[%d].ioutput  %s\n",10-round,  to_Array()) ;
 
 }
 

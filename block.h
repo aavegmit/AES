@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "gf28.h"
 #include "keys.h"
+#include "table.h"
 
 using namespace std ;
 
@@ -22,8 +23,8 @@ class Block{
 		void MixColumns();
 		void AddRoundKey(Keys&,int);			// Bit wise XOR with the round key
 
-		Block Encrypt(Keys&) ;
-		Block Decrypt(Keys&) ;
+		void Encrypt(Keys&) ;
+		void Decrypt(Keys&) ;
 		char *to_Array();
 
 		void InvSubBytes();

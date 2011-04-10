@@ -95,7 +95,7 @@ Word Word::RotWord(){
 		return Word(temp,4) ;
 	}
 	else
-		return Word("00000000") ;
+		return Word((char *)("00000000")) ;
 }
 
 
@@ -156,16 +156,16 @@ void Word::WModProd(unsigned char ch, char *res){
 
 void Word::Inverse(){
 
-	Word Q("00000000", 4) ;
-	Word D("0100000001", 5) ;
+	Word Q((char *)("00000000"), 4) ;
+	Word D((char *)("0100000001"), 5) ;
 
 	Word *rem[7], *quo[7], *aux[7] ;
-	rem[1] = new Word("0100000001",5) ;
+	rem[1] = new Word((char *)("0100000001"),5) ;
 	rem[2] = new Word(*this) ;
-	quo[1] = new Word("00000000" ,4) ;
-	quo[2] = new Word("00000000" ,4) ;
-	aux[1] = new Word("00000000" ,4) ;
-	aux[2] = new Word("00000001" ,4) ;
+	quo[1] = new Word((char *)("00000000") ,4) ;
+	quo[2] = new Word((char *)("00000000") ,4) ;
+	aux[1] = new Word((char *)("00000000") ,4) ;
+	aux[2] = new Word((char *)("00000001") ,4) ;
 
 	unsigned char str[17] ;
 
@@ -178,24 +178,31 @@ void Word::Inverse(){
 	aux[2]->to_print(str) ;
 	printf("aux[i]=%s\n", str ) ;
 
-	GF28 temp1("00000000") ;
-	GF28 temp2("00000000") ;
-	Word zeroWord("00000000", 4) ;
-	for(int i = 3 ; i < 6 ; ++i){
+	GF28 temp1((char *)("00000000")) ;
+	GF28 temp2((char *)("00000000")) ;
+	Word zeroWord((char *)("00000000"), 4) ;
+	for(int i = 3 ; i < 7 ; ++i){
+		if ( i == 6 ){
+			rem[i-2]->w[ rem[i-2]->len -1  ] = rem[i-2]->w[ rem[i-2]->len - 1  ] ^ 0x01 ;
+//			printf("final round: %02x\n", rem[4]->to_Array()[rem[4]->len - 1]) ;
+		}
 		Word temp(*rem[i-2]) ;
-		Word Q("00000000", 4) ;
+		Word Q((char *)("00000000"), 4) ;
 		temp.Divide(*rem[i-1], Q, temp) ;
 		rem[i] = new Word(temp) ;
-		aux[i] = new Word("00000000", 4) ;
+		aux[i] = new Word((char *)("00000000"), 4) ;
 		unsigned char tempStr[4] ;
 		temp1.copyW(Q.to_Array()) ;
 		temp2.copyW(aux[i-1]->to_Array()) ;
 		temp1.ModProd(temp2, tempStr) ;
-		quo[i] = new Word("00000000", 4) ;
+		quo[i] = new Word((char *)("00000000"), 4) ;
 		quo[i]->copyW(Q.to_Array()) ;
 		aux[i]->copyW(tempStr) ;
 		*aux[i] = aux[i]->XOR(*aux[i-2]) ;
 
+		if (i==6){
+			rem[i]->w[rem[i]->len - 1] = 0x01 ;
+		}
 		rem[i]->to_print(str) ;
 		printf("i=%d, rem[i]=%s, ",i, str ) ;
 		quo[i]->to_print(str) ;
@@ -203,12 +210,26 @@ void Word::Inverse(){
 		aux[i]->to_print(str) ;
 		printf("aux[i]=%s\n", str ) ;
 
-		if (rem[i]->compare(zeroWord)){
+		int flag = 0 ;
+		for (int h = 0 ; h < D.len ; ++h){
+			if (rem[i]->to_Array()[h] != 0x00){
+				flag = 1 ;
+				break ;
+			}
+		}
+
+		if (!flag){
 			rem[2]->to_print(str) ;
 			printf("%s does not have a multiplicative inverse.\n", str) ;
 			return ;
 		}
 	}
+
+
+	rem[2]->to_print(str) ;
+	printf("Multiplicative inverse of %s is ", str) ;
+	aux[6]->to_print(str) ;
+	printf("%s\n", str) ;	
 
 
 	//	Divide(*this, Q, D) ;
@@ -259,15 +280,19 @@ void Word::Divide(Word wo, Word& Q, Word& D){
 		Word temp1((char *)tempStr, wo.len) ;
 		D = D.XOR(temp1) ;
 
+		int flag = 0 ;
 		for (int h = 0 ; h < D.len ; ++h){
 			if (D.to_Array()[h] != 0x00){
 				for (int j = 0 ; j < D.len - h ; ++j)
 					D.w[j] = D.w[j+h] ;
 				D.len = D.len - h ;
+				flag = 1 ;
 				break ;
 			}
 
 		}
+		if(!flag)
+			break ;
 
 
 		if(D.len >= wo.len){
@@ -276,19 +301,19 @@ void Word::Divide(Word wo, Word& Q, Word& D){
 //			D.len = wo.len ;
 			--i ;
 		}
+	
 		++ctr ;
 		if (ctr >= 10){
-			printf("some mess\n\n") ;
 			break ;
 		}
 	}
-	Q.display() ;
-	D.display() ;
+//	Q.display() ;
+//	D.display() ;
 
 }
 
 
 // Destructor definition for the class Word
 Word::~Word(){
-	//	delete w ;
+	delete []w ;
 }

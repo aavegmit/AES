@@ -63,9 +63,12 @@ Byte Byte::InvSubByte(){
 
 Byte Byte::Inverse(){
 	if (c == 0x00)
-		return 0x00 ;
-	for(unsigned char i = 0x01 ; i <= 0xff; ++i){
-		if(((*this)*Byte(i)).to_uchar() == 0x01)
-			return Byte(i) ;
+		return Byte(0x00) ;
+	if (c == 0xff)
+		return Byte(0x1c) ;
+	for(uint8_t i = 0x01 ; i <= 0xfe; ++i){
+		if(((*this)*Byte((unsigned char) (i))).to_uchar() == 0x01)
+			return Byte( (unsigned char)i) ;
 	}
+	return Byte(0x00) ;
 }
